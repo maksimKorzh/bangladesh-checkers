@@ -21,9 +21,9 @@
     3, 3, 3, 3, 3, 3, 3,
     3, 0, 0, 0, 0, 0, 3,
     3, 0, 0, 0, 0, 0, 3,
-    3, 0, 0, 2, 2, 0, 3,
+    3, 0, 0, 2, 0, 0, 3,
     3, 0, 0, 0, 0, 0, 3,
-    3, 0, 0, 0, 0, 0, 3,
+    3, 0, 0, 2, 0, 0, 3,
     3, 0, 0, 1, 1, 0, 3,
     3, 0, 0, 0, 0, 0, 3,
     3, 0, 0, 0, 0, 0, 3,
@@ -76,7 +76,11 @@
       for (let dir of [+1, -1, +7, -7]) {
         dstSq = srcSq + dir;
         capSq = dstSq;
-        if (board[capSq] == side) continue;
+        if (board[capSq] == side || board[capSq] == 3) continue;
+        if (board[capSq] == (3-side)) {
+          if (board[capSq + dir] == 0) dstSq = capSq + dir;
+          else continue;
+        }
         capPce = board[capSq];
         moves.push([srcSq, dstSq, capSq, pce, capPce]);
       }
@@ -88,12 +92,14 @@
     board[move[2]] = 0;
     board[move[1]] = move[3];
     board[move[0]] = 0;
+    side = 3 - side;
   }
   
   function takeBack(move) {
     board[move[0]] = move[3];
     board[move[1]] = 0;
     board[move[2]] = move[4];
+    side = 3 - side;
   }
   
   function userMove(sq) {
@@ -112,10 +118,7 @@
     } else if (clickLock) {
       userDst = clickSq;
       for (let move of moves)
-        if (userSrc == move[0] && userDst == move[1]) {
-          makeMove(move);
-          side = 3 - side;
-        }
+        if (userSrc == move[0] && userDst == move[1]) makeMove(move);
       drawBoard();
       clickLock = 0;
     }
