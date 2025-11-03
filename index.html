@@ -2,6 +2,7 @@
   <div id="board"></div>
   <div style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;">
     <button onclick="window.location.reload();">Play</button>
+    <button onclick="ai ^= 1;">AI</button>
     <button id="undo">Undo</button>
     <button id="move">Move</button>
     <button id="flip">Flip</button>
@@ -14,7 +15,7 @@
 </body>
 <script>
   let size = parseInt(window.innerHeight / 11);
-  document.styleSheets['0'].cssRules[2].style.width = parseInt(size * 1.65);
+  document.styleSheets['0'].cssRules[2].style.width = parseInt(size * 1.315);
   
   var board = [
     3, 3, 3, 3, 3, 3, 3,
@@ -31,14 +32,14 @@
   
   var pst = [
     0,  3,  3,  3,  3,  3,  0,
-    0, -1, -1, -1, -1, -1,  0,
-    0, -1, -1, -1, -1, -1,  0,
+    0, -3, -3, -3, -3, -3,  0,
+    0, -2, -2, -2, -2, -2,  0,
     0, -1, -1, -1, -1, -1,  0,
     0,  1,  2,  3,  2,  1,  0,
     0,  1,  2,  3,  2,  1,  0,
     0, -1, -1, -1, -1, -1,  0,
-    0, -1, -1, -1, -1, -1,  0,
-    0, -1, -1, -1, -1, -1,  0,
+    0, -2, -2, -2, -2, -2,  0,
+    0, -3, -3, -3, -3, -3,  0,
     0,  0,  0,  0,  0,  0,  0,
   ];
   
@@ -48,6 +49,7 @@
   var userSrc, userDst;
   var legalMoves = [];
   var gameMoves = [];
+  var gameOver = 0;
   
   function drawBoard() {
     let boardHTML = `<table bgcolor="#996633" align="center" cellspacing="1" `;
@@ -74,6 +76,7 @@
       } boardHTML+= '</tr>';
     } boardHTML+= '</table>';
     document.getElementById('board').innerHTML = boardHTML;
+    setTimeout(function() { isGameOver(); }, 200);
   } drawBoard();
 
   function generateMoves() {
@@ -122,8 +125,8 @@
     let score = 0;
     for (let sq = 0; sq < board.length; sq++) {
       if (board[sq] == 3) continue;
-      if (board[sq] == 1) score += 1 + pst[sq];
-      if (board[sq] == 2) score -= 1 + pst[sq];
+      if (board[sq] == 1) score += 50 + pst[sq];
+      if (board[sq] == 2) score -= 50 + pst[sq];
     } return (side == 1) ? score : -score
   }
 
@@ -151,21 +154,37 @@
     }
     const bestScore = negamax(depth, alpha, beta);
     side = oldSide;
+    if (!bestMove) bestMove = generateMoves()[0];
     return { bestScore, bestMove };
   }
   
   function computerMove() {
     setTimeout(function() {
       let oldSide = side;
-      let response = search(6);
-      gameMoves.push([response.bestMove, side]);
-      makeMove(response.bestMove);
-      if (moreCapture(response.bestMove)) side = 3 - side;
+      let response = search(5);
+      if (response.bestMove) {
+        gameMoves.push([response.bestMove, side]);
+        makeMove(response.bestMove);
+        if (moreCapture(response.bestMove)) side = 3 - side;
+      } else return;
       drawBoard();
       if (side == oldSide) computerMove();
     }, 200);
   }
   
+  function isGameOver() {
+    if (gameOver) return;
+    let limes = 0;
+    let eggs = 0;
+    for (let sq = 0; sq < board.length; sq++) {
+      if (board[sq] == 3) continue;
+      if (board[sq] == 1) eggs += 1;
+      if (board[sq] == 2) limes += 1;
+    }
+    if (!limes) { gameOver = 1; alert('Eggs won!'); }
+    if (!eggs) { gameOver = 1; alert('Limes won!'); }
+  }
+
   function userMove(sq) {
     var clickSq = parseInt(sq, 10);
     if (!clickLock && board[clickSq]) {
