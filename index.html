@@ -1,3 +1,5 @@
+<base href="bangladesh-checkers">
+<link rel="manifest" href="/bangladesh-checkers/manifest.json">
 <div id="game-container" style="display: flex; flex-direction: column; align-items: center;">
   <div id="board"></div>
   <div id="buttons" style="display: flex; justify-content: center; gap: 6px; margin-top: 10px;">
@@ -14,6 +16,8 @@
   .highlight { box-shadow: inset 0px 0px 20px 20px #ff3300; }
 </style>
 <script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/bangladesh-checkers/service-worker.js');
+  
   let size = parseInt(window.innerHeight / 12.1);
   
   var board = [

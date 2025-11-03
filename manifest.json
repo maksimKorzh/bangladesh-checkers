@@ -1,0 +1,21 @@
+{
+  "name": "Bangladesh Checkers",
+  "short_name": "Bangladesh Checkers",
+  "start_url": "/bangladesh-checkers/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/bangladesh-checkers/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/bangladesh-checkers/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
