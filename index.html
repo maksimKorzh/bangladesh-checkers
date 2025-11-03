@@ -1,6 +1,7 @@
-<body style="font-family: monospace; font-size: 20px;">
+<body style="font-family: monospace; font-size: 30px; background-color: black;">
   <div id="board"></div>
   <div style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;">
+    <button onclick="window.location.reload();">Play</button>
     <button id="undo">Undo</button>
     <button id="move">Move</button>
     <button id="flip">Flip</button>
@@ -8,10 +9,13 @@
   <style>
     .highlight { box-shadow: inset 0px 0px 3px 3px #ff3300; }
     .mate { box-shadow: inset 0px 0px 5px 5px red; }
-    button { font-size: inherit; font-family: inherit; }
+    button { font-size: inherit; font-family: inherit; background-color: #222; color: grey; }
   </style>
 </body>
 <script>
+  let size = parseInt(window.innerHeight / 11);
+  document.styleSheets['0'].cssRules[2].style.width = parseInt(size * 1.65);
+  
   var board = [
     3, 3, 3, 3, 3, 3, 3,
     3, 2, 2, 2, 2, 2, 3,
@@ -64,8 +68,8 @@
         let sq = rank * 7 + file;
         if (board[sq] == 3) continue;
         boardHTML+= '<td align="center" id="' + sq + 
-             '" width="65" height="65" style="font-size: 45px; border: 1px solid black;"' +
-             ' onclick="userMove(this.id)">' + [' ', '\uD83E\uDD5A', '\uD83C\uDF4B'][board[sq]] +
+             '" style="width: ' + size + 'px; height: ' + size + 'px; font-size: ' + size + 'px; border: 1px solid black;"' +
+             ' onclick="userMove(this.id)">' + ['<span style=\'visibility:hidden\'>\uD83E\uDD5A</span>', '\uD83E\uDD5A', '\uD83C\uDF4B'][board[sq]] +
              '</td>';
       } boardHTML+= '</tr>';
     } boardHTML+= '</table>';
@@ -93,7 +97,13 @@
       }
     } return moves;
   }
-  
+
+  function moreCapture(move) {
+    for (let dir of [+1, -1, +7, -7])
+      if (gameMoves[gameMoves.length-1][0][4] && board[move[1] + dir] == side && board[move[1] + dir + dir] == 0) return 1;
+    return 0;
+  }
+
   function makeMove(move) {
     board[move[2]] = 0;
     board[move[1]] = move[3];
@@ -144,6 +154,18 @@
     return { bestScore, bestMove };
   }
   
+  function computerMove() {
+    setTimeout(function() {
+      let oldSide = side;
+      let response = search(6);
+      gameMoves.push([response.bestMove, side]);
+      makeMove(response.bestMove);
+      if (moreCapture(response.bestMove)) side = 3 - side;
+      drawBoard();
+      if (side == oldSide) computerMove();
+    }, 200);
+  }
+  
   function userMove(sq) {
     var clickSq = parseInt(sq, 10);
     if (!clickLock && board[clickSq]) {
@@ -159,31 +181,30 @@
       clickLock = 1;
     } else if (clickLock) {
       userDst = clickSq;
+      drawBoard();
       for (let move of legalMoves)
         if (userSrc == move[0] && userDst == move[1]) {
+          gameMoves.push([move, side]);
           makeMove(move);
-          gameMoves.push(move);
-          let response = search(6);
-          makeMove(response.bestMove);
-          gameMoves.push(response.bestMove);
+          drawBoard();
+          if (moreCapture(move)) side = 3 - side;
+          else computerMove();
         }
-      drawBoard();
       clickLock = 0;
     }
   }
   
   document.getElementById('undo').addEventListener('click', () => {
     if (!gameMoves.length) return;
-    takeBack(gameMoves[gameMoves.length-1]);
+    let lastMove = gameMoves[gameMoves.length-1];
+    takeBack(lastMove[0]);
+    side = lastMove[1];
     gameMoves.pop();
     drawBoard();
   });
   
   document.getElementById('move').addEventListener('click', () => {
-    let response = search(6);
-    makeMove(response.bestMove);
-    gameMoves.push(response.bestMove);
-    drawBoard();
+    computerMove();
   });
   
   document.getElementById('flip').addEventListener('click', () => {
