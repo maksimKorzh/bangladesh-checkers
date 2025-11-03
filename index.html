@@ -3,7 +3,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <base href="bangladesh-checkers">
-    <link rel="manifest" href="/bangladesh-checkers/manifest.json">
     <style>
       html, body { margin: 0; padding: 0; width: 100%; height: 100dvh; background-color: #000000; }
       body { padding: 0px; margin: 0px; font-family: monospace; font-size: 30px; background-color: black; }
@@ -23,9 +22,7 @@
       </div>
     </div>
     <script>
-      if ('serviceWorker' in navigator) navigator.serviceWorker.register('/bangladesh-checkers/service-worker.js');
-      
-      let size = parseInt(window.innerHeight / 12.5);
+      let size = parseInt(window.innerHeight / 12.1);
       
       var board = [
         3, 3, 3, 3, 3, 3, 3,
