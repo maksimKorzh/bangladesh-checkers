@@ -1,21 +1,20 @@
-<body style="font-family: monospace; font-size: 30px; background-color: black;">
+<div id="game-container" style="display: flex; flex-direction: column; align-items: center;">
   <div id="board"></div>
-  <div style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;">
+  <div id="buttons" style="display: flex; justify-content: center; gap: 6px; margin-top: 10px;">
     <button onclick="window.location.reload();">Play</button>
-    <button onclick="ai ^= 1;">AI</button>
+    <button onclick="ai ^= 1; alert('AI is now ' + (ai ? 'on' : 'off'));">AI</button>
     <button id="undo">Undo</button>
     <button id="move">Move</button>
     <button id="flip">Flip</button>
   </div>
-  <style>
-    .highlight { box-shadow: inset 0px 0px 3px 3px #ff3300; }
-    .mate { box-shadow: inset 0px 0px 5px 5px red; }
-    button { font-size: inherit; font-family: inherit; background-color: #222; color: grey; }
-  </style>
-</body>
+</div>
+<style>
+  body { padding: 0px; margin: 0px; font-family: monospace; font-size: 30px; background-color: black; }
+  button { width: 100%; height: 100px; font-size: inherit; font-family: inherit; background-color: #222; color: grey; }
+  .highlight { box-shadow: inset 0px 0px 20px 20px #ff3300; }
+</style>
 <script>
-  let size = parseInt(window.innerHeight / 11);
-  document.styleSheets['0'].cssRules[2].style.width = parseInt(size * 1.315);
+  let size = parseInt(window.innerHeight / 12.1);
   
   var board = [
     3, 3, 3, 3, 3, 3, 3,
@@ -50,6 +49,7 @@
   var legalMoves = [];
   var gameMoves = [];
   var gameOver = 0;
+  var ai = 1;
   
   function drawBoard() {
     let boardHTML = `<table bgcolor="#996633" align="center" cellspacing="1" `;
@@ -76,6 +76,7 @@
       } boardHTML+= '</tr>';
     } boardHTML+= '</table>';
     document.getElementById('board').innerHTML = boardHTML;
+    document.getElementById('buttons').style.width = (document.getElementById('board').offsetWidth) + 'px';
     setTimeout(function() { isGameOver(); }, 200);
   } drawBoard();
 
@@ -159,6 +160,7 @@
   }
   
   function computerMove() {
+    if (!ai) return;
     setTimeout(function() {
       let oldSide = side;
       let response = search(5);
