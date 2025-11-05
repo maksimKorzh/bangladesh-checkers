@@ -4,16 +4,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <base href="bangladesh-checkers">
     <style>
-      html, body { margin: 0; padding: 0; width: 100%; height: 100dvh; background-color: #000000; }
-      body { padding: 0px; margin: 0px; font-family: monospace; font-size: 30px; background-color: black; }
-      button { width: 100%; height: 100px; font-size: inherit; font-family: inherit; background-color: #222; color: grey; }
+      html, body { margin: 0; padding: 0; width: 100%; height: 100dvh; background-color: white; }
+      body { padding: 0px; margin: 0px; font-family: monospace; font-size: 20px; background-color: white; }
+      button { width: 100%; height: 80px; font-size: inherit; font-family: inherit; background-color: white; color: black; }
       .highlight { box-shadow: inset 0px 0px 20px 20px #ff3300; }
     </style>
   </head>
   <body>
     <div id="game-container" style="display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%;">
       <div id="board"></div>
-      <div id="buttons" style="display: flex; justify-content: center; gap: 6px; margin-top: 10px;">
+      <div id="buttons" style="display: flex; justify-content: center; gap: 1px; margin-top: 10px;">
         <button onclick="window.location.reload();">Play</button>
         <button onclick="ai ^= 1; alert('AI is now ' + (ai ? 'on' : 'off'));">AI</button>
         <button id="undo">Undo</button>
@@ -22,7 +22,8 @@
       </div>
     </div>
     <script>
-      let size = parseInt(window.innerHeight / 12.1);
+      let width = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+      let size = parseInt(width / 5);
       
       var board = [
         3, 3, 3, 3, 3, 3, 3,
@@ -60,9 +61,9 @@
       var ai = 1;
       
       function drawBoard() {
-        let boardHTML = `<table bgcolor="#996633" align="center" cellspacing="1" `;
+        let boardHTML = `<table align="center" cellspacing="1" `;
         boardHTML += `style=" -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;`;
-        boardHTML += `user-select: none; -o-user-select: none; border: 10px solid #996633;"`;
+        boardHTML += `user-select: none; -o-user-select: none;`;
         boardHTML += `unselectable="on" onselectstart="return false;" onmousedown="return false;"`;
         for (let row = 0; row < 9; row++) {
           boardHTML+= '<tr>';
@@ -78,8 +79,8 @@
             let sq = rank * 7 + file;
             if (board[sq] == 3) continue;
             boardHTML+= '<td align="center" id="' + sq + 
-                 '" style="width: ' + size + 'px; height: ' + size + 'px; font-size: ' + size + 'px; border: 1px solid black;"' +
-                 ' onclick="userMove(this.id)">' + ['<span style=\'visibility:hidden\'>\uD83E\uDD5A</span>', '\uD83E\uDD5A', '\uD83C\uDF4B'][board[sq]] +
+                 '" style="width: ' + size + 'px; height: ' + size + 'px; padding: 0px; font-size: ' + (size/2) + 'px; border: 1px solid black;"' +
+                 ' onclick="userMove(this.id)">' + ['<span style=\'visibility:hidden\'>\u2B24</span>', '\u25EF', '\u2B24'][board[sq]] +
                  '</td>';
           } boardHTML+= '</tr>';
         } boardHTML+= '</table>';
@@ -184,15 +185,15 @@
       
       function isGameOver() {
         if (gameOver) return;
-        let limes = 0;
-        let eggs = 0;
+        let black = 0;
+        let white = 0;
         for (let sq = 0; sq < board.length; sq++) {
           if (board[sq] == 3) continue;
-          if (board[sq] == 1) eggs += 1;
-          if (board[sq] == 2) limes += 1;
+          if (board[sq] == 1) white += 1;
+          if (board[sq] == 2) black += 1;
         }
-        if (!limes) { gameOver = 1; alert('Eggs won!'); }
-        if (!eggs) { gameOver = 1; alert('Limes won!'); }
+        if (!black) { gameOver = 1; alert('White won!'); }
+        if (!white) { gameOver = 1; alert('Black won!'); }
       }
     
       function userMove(sq) {
