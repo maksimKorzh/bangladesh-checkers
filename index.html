@@ -23,7 +23,30 @@
     </div>
     <script>
       let width = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
-      let size = parseInt(width / 5);
+      let size = parseInt(width / (window.innerWidth > window.innerHeight ? 10 : 5 ));
+      let radius = size / 3; // radius slightly smaller so stroke fits inside
+
+      let whitePiece = `
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="white circle">
+          <circle 
+            cx="${size / 2}" 
+            cy="${size / 2}" 
+            r="${radius}" 
+            fill="#fff" 
+            stroke="#000" 
+            stroke-width="3"
+          />
+        </svg>`;
+
+      let blackPiece = `
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="black circle">
+          <circle 
+            cx="${size / 2}" 
+            cy="${size / 2}" 
+            r="${radius}" 
+            fill="#000" 
+          />
+        </svg>`;
       
       var board = [
         3, 3, 3, 3, 3, 3, 3,
@@ -80,7 +103,7 @@
             if (board[sq] == 3) continue;
             boardHTML+= '<td align="center" id="' + sq + 
                  '" style="width: ' + size + 'px; height: ' + size + 'px; padding: 0px; font-size: ' + (size/2) + 'px; border: 1px solid black;"' +
-                 ' onclick="userMove(this.id)">' + ['<span style=\'visibility:hidden\'>\u2B24</span>', '\u25EF', '\u2B24'][board[sq]] +
+                 ' onclick="userMove(this.id)">' + ['<span style=\'visibility:hidden\'>' + blackPiece + '</span>', blackPiece, whitePiece][board[sq]] +
                  '</td>';
           } boardHTML+= '</tr>';
         } boardHTML+= '</table>';
